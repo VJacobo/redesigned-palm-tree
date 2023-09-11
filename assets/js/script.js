@@ -35,10 +35,14 @@ const nextButton = document.getElementById("next-btn");
 let currentQuestionIndex = 0;
 let score = 0;
 
+const timerElement = document.getElementById("timer")
+let timeLeft = 60;
+
 function startQuiz() {
     currentQuestionIndex = 0;
     score = 0;
     nextButton.innerHTML = "Next";
+    startTimer();
     showQuestion();
 }
 
@@ -71,12 +75,15 @@ function resetState() {
 function selectAnswer(e) {
   const selectedBtn = e.target;
   const isCorrect = selectedBtn.dataset.correct === "true";
+
   if(isCorrect){
     selectedBtn.classList.add("correct");
     score++
   }else{
     selectedBtn.classList.add("incorrect");
+    timeLeft -= 10;
   }
+
   Array.from(answerButtons.children).forEach(button => {
     if(button.dataset.correct === "true"){
         button.classList.add("correct");
@@ -98,9 +105,40 @@ nextButton.addEventListener("click", () => {
 function endQuiz() {
     questionElement.innerHTML = "Quiz Over! Your Score: " + score + "/" + questions.length;
     nextButton.style.display = "none";
-    
     resetState();
+    
 }
+function startTimer() {
+    const timerInterval = setInterval(function (){
+       timerElement.textContent = `Time: ${timeLeft}`;
+
+        if (timeLeft <= 0 || currentQuestionIndex >= questions.length) {
+            clearInterval(timerInterval);
+            endQuiz();
+        }else{
+            timeLeft--;
+        }
+    },1000);
+}
+
+    const initialsForm = document.getElementById("initials-form");
+    initialsForm.innerHTML = `
+        <label for="initials">Enter Your Initials:</label>
+        <input type="text" id="initials" maxlength="3">
+        <button id="save-score-btn">Save Score</button>
+    `;
+
+    const saveScoreButton = document.getElementById("save-score-btn");
+    saveScoreButton.addEventListener("click", () => {
+        const initialsInput = document.getElementById("initials");
+        const initials = initialsInput.value;
+
+        const userScore = { initials, score };
+        localStorage.setItem("userScore", JSON.stringify(userScore));
+
+    });
+
+
 
 
 startQuiz();

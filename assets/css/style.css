@@ -8,7 +8,7 @@ body {
     background: #001e4d;
 }
 .app {
-    background: forestgreen;
+    background: rgb(34, 114, 139);
     width: 90%;
     max-width: 600px;
     margin: 100px auto 0;
